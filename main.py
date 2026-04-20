@@ -25,8 +25,7 @@ for index, row in df.iterrows():
 print("Done! Total images processed:", len(features_list))
 
 # ── 3. TRAIN THE SVM ON ALL TRAINING DATA ───────────────────────
-# We validated 99.5% accuracy earlier with an 80/20 split
-# Now we train on the full dataset for the best possible predictions
+# I validated 99.5% accuracy earlier with an 80/20 split so now it's expanded on the whole set
 X = np.array(features_list)
 y = np.array(labels_list)
 
@@ -49,7 +48,8 @@ for index, row in test_df.iterrows():
 X_test_final = np.array(test_features_list)
 predictions = clf.predict(X_test_final)
 
-# save predictions to submission.csv
+# Save predictions to submission.csv
+# Actually not sure how we upload these since we will have muliple different ones, does it just keep the best one?
 submission = pd.DataFrame({"Id": test_df["Id"], "Category": predictions})
 submission.to_csv("submission.csv", index=False)
 print("Submission saved!")
