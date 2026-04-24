@@ -2,3 +2,4 @@ iivp-2026-challenge
 .DS_Store
 .idea/
 CLAUDE.md
+*.pth
