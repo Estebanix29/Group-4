@@ -13,7 +13,7 @@ print(df.head())
 print(df.shape)
 
 # ── 2. EXTRACT HOG FEATURES FROM ALL TRAINING IMAGES ────────────
-# Using 4x4 cells instead of 8x8 for finer shape detail
+# 8x8 cells proved better than 4x4 for this dataset
 features_list = []
 labels_list = []
 
@@ -22,7 +22,7 @@ for index, row in df.iterrows():
     label = row["Category"]
     path = f"train/train/{label}/{img_id}.png"
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    features = hog(img, pixels_per_cell=(4, 4), cells_per_block=(2, 2), orientations=9)
+    features = hog(img, pixels_per_cell=(8, 8), cells_per_block=(2, 2), orientations=9)
     features_list.append(features)
     labels_list.append(label)
 
@@ -36,9 +36,9 @@ y = np.array(labels_list)
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
-# wider grid search on a larger sample for more reliable results
+# focused grid search around our best known values
 X_sample, _, y_sample, _ = train_test_split(X, y, train_size=5000, random_state=42, stratify=y)
-param_grid = {"C": [1, 10, 100, 1000], "gamma": [0.0001, 0.001, 0.01, 0.1]}
+param_grid = {"C": [5, 10, 20, 50], "gamma": [0.0005, 0.001, 0.005, 0.01]}
 grid = GridSearchCV(SVC(kernel="rbf"), param_grid, cv=3, verbose=2)
 grid.fit(X_sample, y_sample)
 print("─" * 40)
@@ -61,7 +61,7 @@ for index, row in test_df.iterrows():
     img_id = row["Id"]
     path = f"test/test/{img_id}.png"
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    features = hog(img, pixels_per_cell=(4, 4), cells_per_block=(2, 2), orientations=9)
+    features = hog(img, pixels_per_cell=(8, 8), cells_per_block=(2, 2), orientations=9)
     test_features_list.append(features)
 
 # scale test features using the same scaler as training
