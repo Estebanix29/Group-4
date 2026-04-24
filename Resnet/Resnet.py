@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 device_name = tf.test.gpu_device_name()
-if device_name != '/device:GPU:0':
-  raise SystemError('GPU device not found')
-print('Found GPU at: {}'.format(device_name))
+if device_name == '/device:GPU:0':
+    print('Found GPU at: {}'.format(device_name))
+else:
+    print('No GPU found, using CPU')
 
 print(tf.__version__)
 
@@ -51,11 +52,11 @@ x = residual_block(x, 512)
 x = keras.layers.GlobalAveragePooling2D()(x)
 x = keras.layers.Dropout(0.25)(x)
 
-outputs = keras.layers.Dense(1, activation='sigmoid')(x)
+outputs = keras.layers.Dense(10, activation='softmax')(x)
 
 # Create the model
 model = keras.Model(inputs, outputs)
 
 model.compile(optimizer='adam',
-                loss=tf.keras.losses.BinaryCrossentropy(from_logits=False),
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
                 metrics=['accuracy'])
