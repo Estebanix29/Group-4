@@ -18,13 +18,26 @@ train_data, val_data = keras.utils.image_dataset_from_directory(
 )
 
 
+# Data augmentation for training
+data_augmentation = keras.Sequential([
+    keras.layers.RandomRotation(0.15),
+    keras.layers.RandomTranslation(0.1, 0.1),
+    keras.layers.RandomZoom(0.15),
+    keras.layers.RandomFlip("horizontal"),
+])
+
 def normalize_data(data, label):
     data = tf.cast(data, tf.float32) / 255.0
+    return data, label
+
+def augment_data(data, label):
+    data = tf.cast(data, tf.float32) / 255.0
+    data = data_augmentation(data, training=True)
     return data, label
 
 print("Training Classes:")
 class_names = train_data.class_names
 print(class_names)
 
-train_data = train_data.map(normalize_data)
+train_data = train_data.map(augment_data)
 val_data = val_data.map(normalize_data)

@@ -52,6 +52,10 @@ x = residual_block(x, 512)
 x = keras.layers.GlobalAveragePooling2D()(x)
 x = keras.layers.Dropout(0.25)(x)
 
+# Dense hidden layer
+x = keras.layers.Dense(128, activation='relu')(x)
+x = keras.layers.Dropout(0.5)(x)
+
 outputs = keras.layers.Dense(10, activation='softmax')(x)
 
 # Create the model
